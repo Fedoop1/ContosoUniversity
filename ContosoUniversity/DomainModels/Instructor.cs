@@ -12,8 +12,8 @@ namespace ContosoUniversity.DomainModels
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime HireDate { get; set; }
 
-        public virtual ICollection<CourseAssignment> CourseAssignments { get; set; }
-        public virtual OfficeAssignment OfficeAssignment { get; set; }
+        public ICollection<CourseAssignment> CourseAssignments { get; set; }
+        public OfficeAssignment OfficeAssignment { get; set; }
 
     }
 }

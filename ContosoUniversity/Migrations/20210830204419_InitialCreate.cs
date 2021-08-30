@@ -14,47 +14,14 @@ namespace ContosoUniversity.Migrations
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                    FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    HireDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EnrollmentDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Person", x => x.ID);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Instructor",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false),
-                    HireDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Instructor", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_Instructor_Person_ID",
-                        column: x => x.ID,
-                        principalTable: "Person",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Student",
-                columns: table => new
-                {
-                    ID = table.Column<int>(type: "int", nullable: false),
-                    EnrollmentDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Student", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_Student_Person_ID",
-                        column: x => x.ID,
-                        principalTable: "Person",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -73,9 +40,9 @@ namespace ContosoUniversity.Migrations
                 {
                     table.PrimaryKey("PK_Department", x => x.DepartmentID);
                     table.ForeignKey(
-                        name: "FK_Department_Instructor_InstructorID",
+                        name: "FK_Department_Person_InstructorID",
                         column: x => x.InstructorID,
-                        principalTable: "Instructor",
+                        principalTable: "Person",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -91,9 +58,9 @@ namespace ContosoUniversity.Migrations
                 {
                     table.PrimaryKey("PK_OfficeAssignment", x => x.InstructorID);
                     table.ForeignKey(
-                        name: "FK_OfficeAssignment_Instructor_InstructorID",
+                        name: "FK_OfficeAssignment_Person_InstructorID",
                         column: x => x.InstructorID,
-                        principalTable: "Instructor",
+                        principalTable: "Person",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -135,9 +102,9 @@ namespace ContosoUniversity.Migrations
                         principalColumn: "CourseID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CourseAssignment_Instructor_InstructorID",
+                        name: "FK_CourseAssignment_Person_InstructorID",
                         column: x => x.InstructorID,
-                        principalTable: "Instructor",
+                        principalTable: "Person",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -162,9 +129,9 @@ namespace ContosoUniversity.Migrations
                         principalColumn: "CourseID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Enrollment_Student_StudentID",
+                        name: "FK_Enrollment_Person_StudentID",
                         column: x => x.StudentID,
-                        principalTable: "Student",
+                        principalTable: "Person",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -210,13 +177,7 @@ namespace ContosoUniversity.Migrations
                 name: "Course");
 
             migrationBuilder.DropTable(
-                name: "Student");
-
-            migrationBuilder.DropTable(
                 name: "Department");
-
-            migrationBuilder.DropTable(
-                name: "Instructor");
 
             migrationBuilder.DropTable(
                 name: "Person");

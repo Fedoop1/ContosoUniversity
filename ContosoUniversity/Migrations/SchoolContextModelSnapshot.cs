@@ -136,6 +136,10 @@ namespace ContosoUniversity.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FirstMidName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -150,6 +154,8 @@ namespace ContosoUniversity.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Person");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Instructor");
                 });
 
             modelBuilder.Entity("ContosoUniversity.DomainModels.Instructor", b =>
@@ -159,7 +165,7 @@ namespace ContosoUniversity.Migrations
                     b.Property<DateTime>("HireDate")
                         .HasColumnType("datetime2");
 
-                    b.ToTable("Instructor");
+                    b.HasDiscriminator().HasValue("Instructor");
                 });
 
             modelBuilder.Entity("ContosoUniversity.DomainModels.Student", b =>
@@ -169,7 +175,7 @@ namespace ContosoUniversity.Migrations
                     b.Property<DateTime>("EnrollmentDate")
                         .HasColumnType("datetime2");
 
-                    b.ToTable("Student");
+                    b.HasDiscriminator().HasValue("Student");
                 });
 
             modelBuilder.Entity("ContosoUniversity.DomainModels.Course", b =>
@@ -238,24 +244,6 @@ namespace ContosoUniversity.Migrations
                         .IsRequired();
 
                     b.Navigation("Instructor");
-                });
-
-            modelBuilder.Entity("ContosoUniversity.DomainModels.Instructor", b =>
-                {
-                    b.HasOne("ContosoUniversity.DomainModels.Person", null)
-                        .WithOne()
-                        .HasForeignKey("ContosoUniversity.DomainModels.Instructor", "ID")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ContosoUniversity.DomainModels.Student", b =>
-                {
-                    b.HasOne("ContosoUniversity.DomainModels.Person", null)
-                        .WithOne()
-                        .HasForeignKey("ContosoUniversity.DomainModels.Student", "ID")
-                        .OnDelete(DeleteBehavior.ClientCascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ContosoUniversity.DomainModels.Course", b =>

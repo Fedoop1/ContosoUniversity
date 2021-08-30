@@ -12,6 +12,6 @@ namespace ContosoUniversity.DomainModels
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public DateTime EnrollmentDate { get; set; }
 
-        public virtual ICollection<Enrollment> Enrollments { get; set; }
+        public ICollection<Enrollment> Enrollments { get; set; }
     }
 }
