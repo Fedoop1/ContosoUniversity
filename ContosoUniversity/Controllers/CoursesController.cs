@@ -136,6 +136,23 @@ namespace ContosoUniversity.Controllers
             return View(course);
         }
 
+        public IActionResult UpdateCourseCredits() => View();
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateCourseCredits(int? multiplier)
+        {
+            if (multiplier == null)
+            {
+                ModelState.AddModelError("", "Multiplier can't be null or any type other than number.");
+                return View();
+            }
+
+            ViewData["RowsAffected"] =
+                await context.Database.ExecuteSqlRawAsync("UPDATE Course " +
+                                                          $"SET Credits = Credits * {multiplier}");
+            return RedirectToAction(nameof(Index));
+        }
+
         // POST: Courses/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -156,7 +173,7 @@ namespace ContosoUniversity.Controllers
                                                         select department;
 
             ViewData["DepartmentID"] =
-                new SelectList(departmentQuery.AsNoTracking(), "ID", "Name", selectedDepartment);
+                new SelectList(departmentQuery.AsNoTracking(), "DepartmentID", "Name", selectedDepartment);
         }
     }
 }

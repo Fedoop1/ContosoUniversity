@@ -1,7 +1,7 @@
-﻿using ContosoUniversity.Models;
+﻿using System.Collections.Generic;
+using ContosoUniversity.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using ContosoUniversity.Data;
 using ContosoUniversity.ViewModels.SchoolViewModel;
@@ -22,16 +22,38 @@ namespace ContosoUniversity.Controllers
 
         public async Task<IActionResult> About()
         {
-            var students = from student in context.Students
-                group student by student.EnrollmentDate
-                into dateGroup
-                select new EnrollmentDateGroup()
-                {
-                    EnrollmentDate = dateGroup.Key,
-                    StudentCount = dateGroup.Count()
-                };
+            var groups = new List<EnrollmentDateGroup>();
+            var connection = context.Database.GetDbConnection();
 
-            return View(await students.AsNoTracking().ToListAsync());
+            try
+            {
+                await connection.OpenAsync();
+                await using var command = connection.CreateCommand();
+
+                var query = "SELECT EnrollmentDate, Count(*) AS StudentCount " +
+                            "FROM Person " +
+                            "WHERE Discriminator = 'Student' " +
+                            "GROUP BY EnrollmentDate";
+                command.CommandText = query;
+
+                var dbReader = await command.ExecuteReaderAsync();
+                if (dbReader.HasRows)
+                {
+                    while (await dbReader.ReadAsync())
+                    {
+                        groups.Add(new EnrollmentDateGroup()
+                            { EnrollmentDate = dbReader.GetDateTime(0), StudentCount = dbReader.GetInt32(1) });
+                    }
+                }
+
+                await dbReader.DisposeAsync();
+            }
+            finally
+            {
+                await connection.CloseAsync();
+            }
+
+            return View(groups);
         }
 
         public IActionResult Privacy()

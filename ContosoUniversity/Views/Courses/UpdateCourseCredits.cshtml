@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "Update course credits";
+}
+
+<h2>Update course credits</h2>
+
+<form asp-action="UpdateCourseCredits">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group">
+        <p>Enter number to multiply every course's credits by:</p>
+        <input type="text" name="multiplier" class="input-group-text">
+        <input type="submit" value="Submit" class="btn btn-success" style="margin-top: 20px"/>
+    </div>
+</form>
+

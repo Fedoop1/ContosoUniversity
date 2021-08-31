@@ -30,7 +30,9 @@ namespace ContosoUniversity.Controllers
             }
 
             var department = await context.Departments
+                .FromSqlRaw($"SELECT * FROM Department WHERE DepartmentID = {id}")
                 .Include(d => d.Administrator)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.DepartmentID == id);
 
             if (department == null)
@@ -100,7 +102,7 @@ namespace ContosoUniversity.Controllers
 
             if (departmentToUpdate == null)
             {
-                Department deletedDepartment = new Department();
+                Department deletedDepartment = new();
                 await TryUpdateModelAsync(deletedDepartment);
                 ModelState.AddModelError(string.Empty,
                     "Unable to save changes. The department was deleted by another user.");

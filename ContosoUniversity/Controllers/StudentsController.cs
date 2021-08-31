@@ -21,8 +21,8 @@ namespace ContosoUniversity.Controllers
         public async Task<IActionResult> Index(string sortOrder, string currentFilter , string searchString, int? pageNumber)
         {
             ViewData["CurrentSort"] = sortOrder;
-            ViewData["NameSortParam"] = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
-            ViewData["DateSortParam"] = sortOrder == "date" ? "date_desc" : "date";
+            ViewData["NameSortParam"] = string.IsNullOrEmpty(sortOrder) ? "LastName_desc" : "";
+            ViewData["DateSortParam"] = sortOrder == "EnrollmentDate" ? "EnrollmentDate_desc" : "EnrollmentDate";
 
             searchString ??= currentFilter;
 
@@ -36,10 +36,9 @@ namespace ContosoUniversity.Controllers
 
             students = sortOrder switch
             {
-                "name_desc" => students.OrderByDescending(x => x.LastName),
-                "date" => students.OrderBy(x => x.EnrollmentDate),
-                "date_desc" => students.OrderByDescending(x => x.EnrollmentDate),
-                _ => students.OrderBy(x => x.LastName),
+                null => students.OrderBy(x => x.LastName),
+                _ when sortOrder.Contains("_desc") => students.OrderByDescending(e => EF.Property<object>(e, sortOrder.Substring(0, sortOrder.IndexOf("_desc")))),
+                _ => students.OrderBy(e => EF.Property<object>(e, sortOrder)),
             };
 
             const int pageSize = 3;
